@@ -2,31 +2,32 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
-// Routes
 const authRoutes = require('./routes/auth');
-const courseRoutes = require('./routes/course'); // ✅ NEW
+const courseRoutes = require('./routes/course');
 
 dotenv.config();
 
 const app = express();
-app.use(cors()); // ✅ Enable CORS
+app.use(cors());
 app.use(express.json());
 
-// Use Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/courses', courseRoutes); // ✅ NEW
+// ✅ Home Route for Render
+app.get('/', (req, res) => {
+  res.send('✅ SmartSeed Backend is Running!');
+});
 
-// MongoDB Connection
+// ✅ API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/courses', courseRoutes);
+
+// ✅ Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ Connected to MongoDB');
-    app.listen(5000, () => {
-      console.log('🚀 Server running at http://localhost:5000');
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+      console.log(`🚀 Server running at http://localhost:${port}`);
     });
   })
   .catch((err) => {
